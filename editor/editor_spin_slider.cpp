@@ -146,6 +146,7 @@ void EditorSpinSlider::_gui_input(const Ref<InputEvent> &p_event) {
 	if (k.is_valid() && k->is_pressed() && k->is_action("ui_accept")) {
 		_focus_entered();
 	}
+
 }
 
 void EditorSpinSlider::_grabber_gui_input(const Ref<InputEvent> &p_event) {
@@ -192,6 +193,8 @@ void EditorSpinSlider::_grabber_gui_input(const Ref<InputEvent> &p_event) {
 }
 
 void EditorSpinSlider::_notification(int p_what) {
+	
+
 
 	if (p_what == MainLoop::NOTIFICATION_WM_FOCUS_OUT ||
 			p_what == MainLoop::NOTIFICATION_WM_FOCUS_IN ||
@@ -203,6 +206,11 @@ void EditorSpinSlider::_notification(int p_what) {
 			grabbing_spinner_attempt = false;
 		}
 	}
+	
+	if(p_what == NOTIFICATION_VISIBILITY_CHANGED &&  grabber->is_visible()){
+			grabber->hide();
+	}
+
 
 	if (p_what == NOTIFICATION_READY) {
 		// Add a left margin to the stylebox to make the number align with the Label
@@ -324,7 +332,6 @@ void EditorSpinSlider::_notification(int p_what) {
 	}
 
 	if (p_what == NOTIFICATION_MOUSE_ENTER) {
-
 		mouse_over_spin = true;
 		update();
 	}
