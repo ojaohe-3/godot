@@ -85,6 +85,8 @@ protected:
 	void _grabber_mouse_entered();
 	void _grabber_mouse_exited();
 	void _focus_entered();
+	//edit
+	void _spinner_update();
 
 public:
 	String get_tooltip(const Point2 &p_pos) const override;

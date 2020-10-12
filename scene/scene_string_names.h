@@ -79,6 +79,7 @@ public:
 	StringName iteration;
 	StringName update;
 	StringName updated;
+	StringName spinner_update;
 
 	StringName line_separation;
 

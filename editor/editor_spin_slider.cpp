@@ -33,6 +33,9 @@
 #include "core/os/input.h"
 #include "editor_node.h"
 #include "editor_scale.h"
+//edit
+#include "scene/scene_string_names.h"
+
 
 String EditorSpinSlider::get_tooltip(const Point2 &p_pos) const {
 	if (grabber->is_visible()) {
@@ -90,14 +93,11 @@ void EditorSpinSlider::_gui_input(const Ref<InputEvent> &p_event) {
 				}
 			}
 		} else if (mb->get_button_index() == BUTTON_WHEEL_UP || mb->get_button_index() == BUTTON_WHEEL_DOWN) {
-
+			//fix scolling
 			if (grabber->is_visible()){
-				print_line(itos(get_size().y - grabber->get_position().y));
-				
 				mouse_over_spin = false;
-				call_deferred("update");
-				update();	
-				// grabber->hide();
+				update();
+				emit_signal(SceneStringNames::get_singleton()->spinner_update);//cluch your ass
 			}
 		}
 	}
@@ -200,6 +200,7 @@ void EditorSpinSlider::_grabber_gui_input(const Ref<InputEvent> &p_event) {
 }
 
 void EditorSpinSlider::_notification(int p_what) {
+	print_line(itos(p_what));
 	if (p_what == MainLoop::NOTIFICATION_WM_FOCUS_OUT ||
 			p_what == MainLoop::NOTIFICATION_WM_FOCUS_IN ||
 			p_what == NOTIFICATION_EXIT_TREE) {
@@ -486,6 +487,10 @@ void EditorSpinSlider::_focus_entered() {
 	value_input->set_focus_previous(find_prev_valid_focus()->get_path());
 }
 
+void _spinner_update(){
+	print_line("spinner update called!");
+}
+
 void EditorSpinSlider::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_label", "label"), &EditorSpinSlider::set_label);
 	ClassDB::bind_method(D_METHOD("get_label"), &EditorSpinSlider::get_label);
@@ -503,6 +508,8 @@ void EditorSpinSlider::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("_value_input_closed"), &EditorSpinSlider::_value_input_closed);
 	ClassDB::bind_method(D_METHOD("_value_input_entered"), &EditorSpinSlider::_value_input_entered);
 	ClassDB::bind_method(D_METHOD("_value_focus_exited"), &EditorSpinSlider::_value_focus_exited);
+	
+
 
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "label"), "set_label", "get_label");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "read_only"), "set_read_only", "is_read_only");
@@ -527,6 +534,8 @@ EditorSpinSlider::EditorSpinSlider() {
 	grabber->connect("mouse_entered", this, "_grabber_mouse_entered");
 	grabber->connect("mouse_exited", this, "_grabber_mouse_exited");
 	grabber->connect("gui_input", this, "_grabber_gui_input");
+	//edit
+	grabber->connect("spinner_update", this, "_spinner_update");
 	mouse_over_spin = false;
 	mouse_over_grabber = false;
 	mousewheel_over_grabber = false;
