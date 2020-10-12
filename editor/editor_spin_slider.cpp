@@ -91,16 +91,14 @@ void EditorSpinSlider::_gui_input(const Ref<InputEvent> &p_event) {
 			}
 		} else if (mb->get_button_index() == BUTTON_WHEEL_UP || mb->get_button_index() == BUTTON_WHEEL_DOWN) {
 
-			if (grabber->is_visible() ){
-				grabber->hide();
-				print_line(mb->get_position().y < get_size().height / 2 ? "true" : "false");
-				print_line(itos(mb->get_position().y - get_size().height / 2));
-				// call_deferred("update");	
-			}else
-			{
-				update();
+			if (grabber->is_visible()){
+				print_line(itos(get_size().y - grabber->get_position().y));
+				
+				mouse_over_spin = false;
+				call_deferred("update");
+				update();	
+				// grabber->hide();
 			}
-			
 		}
 	}
 
@@ -183,8 +181,6 @@ void EditorSpinSlider::_grabber_gui_input(const Ref<InputEvent> &p_event) {
 			if (!mousewheel_over_grabber) {
 				grabbing_ratio = get_as_ratio();
 				grabbing_from = grabber->get_transform().xform(mb->get_position()).x;
-				print_line(vformat("grabbing from: %d", grabbing_from));
-
 			}
 		} else {
 			grabbing_grabber = false;
@@ -198,7 +194,6 @@ void EditorSpinSlider::_grabber_gui_input(const Ref<InputEvent> &p_event) {
 			return;
 
 		float grabbing_ofs = (grabber->get_transform().xform(mm->get_position()).x - grabbing_from) / float(grabber_range);
-		print_line(vformat("grabber_off: %f", grabbing_ofs));
 		set_as_ratio(grabbing_ratio + grabbing_ofs);
 		update();
 	}
@@ -216,10 +211,10 @@ void EditorSpinSlider::_notification(int p_what) {
 		}
 	}
 	
+	//if grabber is visible and screen changes, hide grabber, if optimizations remove this notification fix this.
 	if(p_what == NOTIFICATION_VISIBILITY_CHANGED &&  grabber->is_visible()){
 			grabber->hide();
 	}
-
 
 	if (p_what == NOTIFICATION_READY) {
 		// Add a left margin to the stylebox to make the number align with the Label
